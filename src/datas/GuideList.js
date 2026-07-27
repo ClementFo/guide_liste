@@ -2,7 +2,7 @@ export const GuideList = [
     {
         title: "Guide 1",
         description: "Description du guide 1",
-        date: "2023-01-01",
+        date: "2027-01-01",
         jour: 7,
         activité: "Activité 1"
     },
@@ -10,7 +10,7 @@ export const GuideList = [
         title: "Guide 2",
         description: "Description du guide 2",
         jour: 5,
-        date: "2023-01-02",
+        date: "2026-11-02",
         activité: "Activité 2"
     },
     {
@@ -24,7 +24,14 @@ export const GuideList = [
         title: "Guide 4",
         description: "Description du guide 4",
         jour: 8,
-        date: "2023-01-04",
+        date: "2026-01-04",
         activité: "Activité 4"
+    },
+    {
+        title: "Guide 5",
+        description: "Description du guide 5",
+        jour: 5,
+        date: "2023-01-05",
+        activité: "Activité 5"
     }
 ];
