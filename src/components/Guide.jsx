@@ -1,9 +1,9 @@
-import '../styles/App.css';
+import '../styles/Guides.css';
 import { Link } from 'react-router-dom';
 
 function Guide({ title, description, date, jour, activité }) {
     return (
-        <div>
+        <div className="guide">
             <h1>{title}</h1>
             <p>{description}</p>
             <p>Date de début: {date}</p>
