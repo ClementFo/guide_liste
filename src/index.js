@@ -1,12 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import {  BrowserRouter as Router,  Routes,  Route} from "react-router-dom";
 import './styles/index.css';
-import App from './components/App';
-import { GuideList } from './datas/GuideList.js';
+import GuideListPage from './pages/GuideListPage';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App GuideList={GuideList} />
+    <Router>
+      <Routes>
+        <Route path="/" element={<GuideListPage />} />
+      </Routes>
+    </Router>
   </React.StrictMode>
 );
