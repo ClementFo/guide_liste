@@ -1,8 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import {  BrowserRouter as Router,  Routes,  Route} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './styles/index.css';
 import GuideListPage from './pages/GuideListPage';
+import GuidePage from './pages/GuidePage';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -10,6 +11,7 @@ root.render(
     <Router>
       <Routes>
         <Route path="/" element={<GuideListPage />} />
+        <Route path="/guide/:id" element={<GuidePage />} />
       </Routes>
     </Router>
   </React.StrictMode>

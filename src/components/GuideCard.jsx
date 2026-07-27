@@ -1,11 +1,17 @@
 import '../styles/Guides.css';
+import { Link } from 'react-router-dom';
 
-function Guide({ title, description, date, jour, activité }) {
+function Guide({ id, title, date, jour }) {
     const formattedDate = new Date(date).toLocaleDateString("fr-FR");
+
     return (
         <div className="guide-card">
             <h1>{title}</h1>
             <p>Début le: {formattedDate} - Durée: {jour} jours</p>
+            {/* Permet de naviguer vers la page du guide */}
+            <Link to={`/guide/${id}`} className="guide-card-link">
+                Voir le guide
+            </Link>
         </div>
     );
 }

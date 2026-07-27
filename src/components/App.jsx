@@ -1,4 +1,3 @@
-
 import '../styles/App.css';
 import '../styles/Guides.css';
 import GuideCard from './GuideCard';
@@ -10,7 +9,8 @@ function App({ GuideList = [] }) {
         <div className="grid-cards">
         {GuideList.map((item, index) => (
             <GuideCard
-            key={`${item.title}-${index}`}
+            key={`${item.title}-${index}`} 
+            id={index}
             title={item.title}
             date={item.date}
             jour={item.jour}
