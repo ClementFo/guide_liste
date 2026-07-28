@@ -1,37 +1,112 @@
 export const GuideList = [
     {
+        id: 1,
         title: "Guide 1",
         description: "Description du guide 1",
-        date: "2027-01-01",
         jour: 7,
-        activité: "Activité 1"
+        mobilité: "à pied",
+        saison: "automne",
+        activité: [
+            {
+                id: 1,
+                title: "Musée des Beaux-Arts",
+                description: "Visite d'un musée d'art moderne et contemporain",
+                categorie: "musée",
+                adresse: "123 Rue de l'Art, 75000 Paris",
+                telephone: "01 23 45 67 89",
+                horaires: "10h-18h (fermé le lundi)",
+                siteweb: "https://museebeauxarts.fr"
+            },
+            {
+                id: 2,
+                title: "Grotte de Lascaux",
+                description: "Exploration des célèbres grottes préhistoriques",
+                categorie: "grotte",
+                adresse: "Montignac, 24290 Dordogne",
+                telephone: "05 53 51 95 03",
+                horaires: "10h-17h",
+                siteweb: "https://www.lascaux.fr"
+            }
+        ]
     },
     {
+        id: 2,
         title: "Guide 2",
         description: "Description du guide 2",
         jour: 5,
-        date: "2026-11-02",
-        activité: "Activité 2"
+        mobilité: "à pied",
+        saison: "été",
+        activité: [
+            {
+                id: 2,
+                title: "Château de Versailles",
+                description: "Découverte du célèbre château et de ses jardins",
+                categorie: "château",
+                adresse: "Place d'Armes, 78000 Versailles",
+                telephone: "01 30 83 78 00",
+                horaires: "09h-18h30",
+                siteweb: "https://www.chateauversailles.fr"
+            }
+        ]
     },
     {
+        id: 3,
         title: "Guide 3",
         description: "Description du guide 3",
         jour: 3,
-        date: "2023-01-03",
-        activité: "Activité 3"
+        mobilité: "Vélo",
+        saison: "Printemps",
+        activité: [
+            {
+                id: 3,
+                title: "Parc de la Tête d'Or",
+                description: "Promenade dans le plus grand parc urbain de France",
+                categorie: "parc",
+                adresse: "Boulevard de la Corniche, 69006 Lyon",
+                telephone: "04 72 69 47 60",
+                horaires: "24h/24",
+                siteweb: "https://www.parcdelateteor.fr"
+            }
+        ]
     },
     {
+        id: 4,
         title: "Guide 4",
         description: "Description du guide 4",
         jour: 8,
-        date: "2026-01-04",
-        activité: "Activité 4"
+        mobilité: "à pied",
+        saison: "Hiver",
+        activité: [
+            {
+                id: 4,
+                title: "Grotte de Lascaux",
+                description: "Exploration des célèbres grottes préhistoriques",
+                categorie: "grotte",
+                adresse: "Montignac, 24290 Dordogne",
+                telephone: "05 53 51 95 03",
+                horaires: "10h-17h",
+                siteweb: "https://www.lascaux.fr"
+            }
+        ]
     },
     {
+        id: 5,
         title: "Guide 5",
         description: "Description du guide 5",
         jour: 5,
-        date: "2023-01-05",
-        activité: "Activité 5"
+        mobilité: "à pied",
+        saison: "été",
+        activité: [
+            {
+                id: 5,
+                title: "Parc d'attractions",
+                description: "Journée amusante en famille avec attractions variées",
+                categorie: "activité",
+                adresse: "Route de la Fête, 77700 Marne-la-Vallée",
+                telephone: "01 60 30 60 60",
+                horaires: "09h-22h (selon saison)",
+                siteweb: "https://www.parcattractions.fr"
+            }
+        ]
     }
 ];

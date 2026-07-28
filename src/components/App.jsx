@@ -7,12 +7,12 @@ function App({ GuideList = [] }) {
     <div className="App">
         <h1>Liste des guides</h1>
         <div className="grid-cards">
-        {GuideList.map((item, index) => (
+        {GuideList.map((item) => (
             <GuideCard
-            key={`${item.title}-${index}`} 
-            id={index}
+            key={`${item.title}-${item.id}`} 
+            id={item.id}
             title={item.title}
-            date={item.date}
+            activités={item.activité}
             jour={item.jour}
             />
         ))}
