@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './styles/index.css';
 import GuideListPage from './pages/GuideListPage';
 import GuidePage from './pages/GuidePage';
+import LoginPage from './pages/LoginPage';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -11,6 +12,7 @@ root.render(
     <Router>
       <Routes>
         <Route path="/" element={<GuideListPage />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route path="/guide/:id" element={<GuidePage />} />
       </Routes>
     </Router>

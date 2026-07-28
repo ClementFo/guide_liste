@@ -27,7 +27,8 @@ export const GuideList = [
                 horaires: "10h-17h",
                 siteweb: "https://www.lascaux.fr"
             }
-        ]
+        ],
+        userListe: []
     },
     {
         id: 2,
@@ -47,7 +48,8 @@ export const GuideList = [
                 horaires: "09h-18h30",
                 siteweb: "https://www.chateauversailles.fr"
             }
-        ]
+        ],
+        userListe: []
     },
     {
         id: 3,
@@ -67,7 +69,8 @@ export const GuideList = [
                 horaires: "24h/24",
                 siteweb: "https://www.parcdelateteor.fr"
             }
-        ]
+        ],
+        userListe: []
     },
     {
         id: 4,
@@ -87,7 +90,8 @@ export const GuideList = [
                 horaires: "10h-17h",
                 siteweb: "https://www.lascaux.fr"
             }
-        ]
+        ],
+        userListe: []
     },
     {
         id: 5,
@@ -107,6 +111,7 @@ export const GuideList = [
                 horaires: "09h-22h (selon saison)",
                 siteweb: "https://www.parcattractions.fr"
             }
-        ]
+        ],
+        userListe: []
     }
 ];
