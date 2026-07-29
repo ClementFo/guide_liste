@@ -11,8 +11,8 @@ root.render(
   <React.StrictMode>
     <Router>
       <Routes>
-        <Route path="/" element={<GuideListPage />} />
-        <Route path="/login" element={<LoginPage />} />
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/guides" element={<GuideListPage />} />
         <Route path="/guide/:id" element={<GuidePage />} />
       </Routes>
     </Router>

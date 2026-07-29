@@ -1,12 +1,43 @@
 import { useState } from 'react';
 
+const API_URL = 'http://http://127.0.0.1/:8000';
+
 function CreateAccountPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('User');
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    setError('');
+    setMessage('');
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(`${API_URL}/new_user`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password, role }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.detail || 'Une erreur est survenue');
+      }
+      setMessage(data.message || 'Utilisateur créé avec succès');
+
+    } catch (err) {
+      setError(err.message || 'Une erreur est survenue');
+
+    } finally {
+      setIsSubmitting(false);
+
+    }
   };
 
   return (
@@ -50,7 +81,12 @@ function CreateAccountPage() {
             </select>
           </div>
 
-          <button type="submit">Créer un compte</button>
+          <button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'Création en cours...' : 'Créer un compte'}
+          </button>
+
+          {message && <p>{message}</p>}
+          {error && <p>{error}</p>}
         </form>
       </section>
     </main>
