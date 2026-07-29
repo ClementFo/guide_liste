@@ -1,6 +1,7 @@
+import '../styles/App.css';
 import { useState } from 'react';
 
-const API_URL = 'http://http://127.0.0.1/:8000';
+const API_URL = 'http://127.0.0.1:8000';
 
 function CreateAccountPage() {
   const [email, setEmail] = useState('');
@@ -41,7 +42,7 @@ function CreateAccountPage() {
   };
 
   return (
-    <main>
+    <main className="App">
       <section>
         <h1>Création de compte</h1>
         <form onSubmit={handleSubmit}>

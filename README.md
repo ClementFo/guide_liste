@@ -13,6 +13,13 @@ source .venv/bin/activate
 ### Api
 pip install fastapi uvicorn
 
+### Lancer l'API
+uvicorn src.api.api:back_end --reload
+
+ou
+
+python src/api/api.py
+
 ### `yarn start`
 
 Runs the app in the development mode.\

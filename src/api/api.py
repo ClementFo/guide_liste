@@ -1,8 +1,11 @@
 import json
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlparse
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 
 
 class api:
@@ -27,99 +30,97 @@ class api:
             json.dump({"users": users}, file, ensure_ascii=False, indent=4)
             file.write("\n")
 
-    def login(self, request: Any):
-        try:
-            if isinstance(request, dict):
-                payload = request
-            else:
-                payload = request.json()
+    def login(self, payload: dict[str, Any]) -> dict[str, Any]:
+        email = (payload.get("email") or "").strip().lower()
+        password = payload.get("password")
 
-            email = (payload.get("email") or "").strip().lower()
-            password = payload.get("password")
+        if not email or not password:
+            raise ValueError("Email et mot de passe requis")
 
-            if not email or not password:
-                raise HTTPException(
-                    status_code=400, detail="Email et mot de passe requis"
-                )
+        users = self._load_users()
+        user = next(
+            (
+                current_user
+                for current_user in users
+                if current_user.get("email", "").lower() == email
+                and current_user.get("password") == password
+            ),
+            None,
+        )
 
-            users = self._load_users()
-            user = next(
-                (
-                    current_user
-                    for current_user in users
-                    if current_user.get("email", "").lower() == email
-                    and current_user.get("password") == password
-                ),
-                None,
-            )
+        if user is None:
+            raise PermissionError("Identifiants invalides")
 
-            if user is None:
-                raise HTTPException(status_code=401, detail="Identifiants invalides")
+        return {"message": "Connexion réussie", "user": {"email": user["email"]}}
 
-            return {"message": "Connexion réussie", "user": {"email": user["email"]}}
-        except HTTPException:
-            raise
-        except (ValueError, TypeError, json.JSONDecodeError) as exc:
-            raise HTTPException(
-                status_code=500,
-                detail="Une erreur est survenue lors de l'authentification",
-            ) from exc
+    def new_user(self, payload: dict[str, Any]) -> dict[str, Any]:
+        email = (payload.get("email") or "").strip().lower()
+        password = payload.get("password")
+        role = payload.get("role") or "User"
 
-    def new_user(self, request: Any):
-        try:
-            if isinstance(request, dict):
-                payload = request
-            else:
-                payload = request.json()
+        if not email or not password:
+            raise ValueError("Email et mot de passe requis")
 
-            email = (payload.get("email") or "").strip().lower()
-            password = payload.get("password")
-            role = payload.get("role") or payload.get("role") or "User"
+        users = self._load_users()
+        if any(
+            current_user.get("email", "").lower() == email for current_user in users
+        ):
+            raise KeyError("Cet utilisateur existe déjà")
 
-            if not email or not password:
-                raise HTTPException(
-                    status_code=400, detail="Email et mot de passe requis"
-                )
+        new_user = {
+            "id": len(users) + 1,
+            "email": email,
+            "password": password,
+            "role": role,
+        }
+        users.append(new_user)
+        self._save_users(users)
 
-            users = self._load_users()
-            if any(
-                current_user.get("email", "").lower() == email for current_user in users
-            ):
-                raise HTTPException(
-                    status_code=409, detail="Cet utilisateur existe déjà"
-                )
-
-            new_user = {
-                "id": len(users) + 1,
-                "email": email,
-                "password": password,
-                "role": role,
-            }
-            users.append(new_user)
-            self._save_users(users)
-
-            return {
-                "message": "Utilisateur créé avec succès",
-                "user": {"email": email, "role": role},
-            }
-        except HTTPException:
-            raise
-        except (ValueError, TypeError, json.JSONDecodeError) as exc:
-            raise HTTPException(
-                status_code=500,
-                detail="Une erreur est survenue lors de la création de l'utilisateur",
-            ) from exc
+        return {
+            "message": "Utilisateur créé avec succès",
+            "user": {"email": email, "role": role},
+        }
 
 
-back_end = FastAPI(title="api")
+back_end = FastAPI()
+back_end.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_credentials=True,
+    allow_methods=["POST", "OPTIONS"],
+    allow_headers=["Content-Type"],
+)
+
 api_back = api()
 
 
 @back_end.post("/login")
-def authenticate(payload: dict[str, Any]):
-    return api_back.login(payload)
+async def login(payload: dict[str, Any]) -> dict[str, Any]:
+    try:
+        return api_back.login(payload)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    except PermissionError as exc:
+        raise HTTPException(status_code=401, detail=str(exc))
+    except (TypeError, json.JSONDecodeError, FileNotFoundError):
+        raise HTTPException(status_code=500, detail="Une erreur est survenue")
 
 
-@back_end.post("/new_user")
-def create_user(payload: dict[str, Any]):
-    return api_back.new_user(payload)
+@back_end.post("/new_user", status_code=201)
+async def new_user(payload: dict[str, Any]) -> dict[str, Any]:
+    try:
+        return api_back.new_user(payload)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    except KeyError as exc:
+        raise HTTPException(status_code=409, detail=str(exc))
+    except (TypeError, json.JSONDecodeError, FileNotFoundError):
+        raise HTTPException(status_code=500, detail="Une erreur est survenue")
+
+
+def main() -> None:
+    print("Serveur démarré sur http://127.0.0.1:8000")
+
+
+if __name__ == "__main__":
+    main()

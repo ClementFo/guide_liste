@@ -4,6 +4,7 @@
 /node_modules
 /.venv
 /.pnp
+/__pycache__
 .pnp.js
 
 # testing
