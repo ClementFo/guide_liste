@@ -5,6 +5,7 @@
 /.venv
 /.pnp
 /__pycache__
+/api/src/__pycache__
 .pnp.js
 
 # testing
