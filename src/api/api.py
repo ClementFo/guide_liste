@@ -130,6 +130,16 @@ class api:
 
         return {"message": "Guide créé avec succès", "guide": new_guide}
 
+    def get_guides(self) -> list[dict[str, Any]]:
+        return self._load_guides()
+
+    def get_guide(self, guide_id: int) -> dict[str, Any]:
+        guides = self._load_guides()
+        guide = next((item for item in guides if item.get("id") == guide_id), None)
+        if guide is None:
+            raise KeyError("Guide introuvable")
+        return guide
+
     def edit_guide(self, payload: dict[str, Any]) -> dict[str, Any]:
         guides = self._load_guides()
         guide_id = payload.get("id")
@@ -222,6 +232,24 @@ async def new_guide(payload: dict[str, Any]) -> dict[str, Any]:
         raise HTTPException(status_code=400, detail=str(exc))
     except PermissionError as exc:
         raise HTTPException(status_code=401, detail=str(exc))
+    except (TypeError, json.JSONDecodeError, FileNotFoundError):
+        raise HTTPException(status_code=500, detail="Une erreur est survenue")
+
+
+@back_end.get("/guides")
+async def get_guides() -> dict[str, Any]:
+    try:
+        return {"guides": api_back.get_guides()}
+    except (TypeError, json.JSONDecodeError, FileNotFoundError):
+        raise HTTPException(status_code=500, detail="Une erreur est survenue")
+
+
+@back_end.get("/guides/{guide_id}")
+async def get_guide(guide_id: int) -> dict[str, Any]:
+    try:
+        return {"guide": api_back.get_guide(guide_id)}
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc))
     except (TypeError, json.JSONDecodeError, FileNotFoundError):
         raise HTTPException(status_code=500, detail="Une erreur est survenue")
 
