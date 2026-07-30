@@ -143,6 +143,25 @@ class api:
             raise KeyError("Guide introuvable")
         return guide
 
+    def get_users(self) -> list[dict[str, Any]]:
+        return self._load_users()
+
+    def delete_users(self, payload: dict[str, Any]) -> dict[str, Any]:
+        users = self._load_users()
+        user_email = payload.get("email")
+
+        if user_email is None:
+            raise ValueError("Identifiant du guide requis")
+
+        user = next((item for item in users if item.get("id") == user_email), None)
+        if user is None:
+            raise KeyError("Utilisateur introuvable")
+
+        users = [item for item in users if item.get("id") != user_email]
+        self._save_users(users)
+
+        return {"message": "Utilisateur supprimé avec succès", "id": user_email}
+
     def edit_guide(self, payload: dict[str, Any]) -> dict[str, Any]:
         guides = self._load_guides()
         guide_id = payload.get("id")
@@ -253,6 +272,26 @@ async def get_guide(guide_id: int) -> dict[str, Any]:
         return {"guide": api_back.get_guide(guide_id)}
     except KeyError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
+    except (TypeError, json.JSONDecodeError, FileNotFoundError):
+        raise HTTPException(status_code=500, detail="Une erreur est survenue")
+
+
+@back_end.get("/users")
+async def get_users() -> dict[str, Any]:
+    try:
+        return {"users": api_back.get_users()}
+    except (TypeError, json.JSONDecodeError, FileNotFoundError):
+        raise HTTPException(status_code=500, detail="Une erreur est survenue")
+
+
+@back_end.post("/delete_user", status_code=200)
+async def delete_users(payload: dict[str, Any]) -> dict[str, Any]:
+    try:
+        return api_back.delete_users(payload)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    except KeyError as exc:
+        raise HTTPException(status_code=409, detail=str(exc))
     except (TypeError, json.JSONDecodeError, FileNotFoundError):
         raise HTTPException(status_code=500, detail="Une erreur est survenue")
 

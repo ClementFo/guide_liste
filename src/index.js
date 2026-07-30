@@ -8,6 +8,7 @@ import LoginPage from './pages/LoginPage';
 import NewGuidePage from './pages/NewGuidePage';
 import ModifyGuidePage from './pages/ModifyGuidePage';
 import CreateAccountPage from './pages/CreateAccountPage';
+import UserListPage from './pages/UserListPage';
 
 function ProtectedRoute({ children }) {
   const currentUser = localStorage.getItem('currentUser');
@@ -30,6 +31,7 @@ root.render(
         <Route path="/new-guide" element={<ProtectedRoute><NewGuidePage /></ProtectedRoute>} />
         <Route path="/modify-guide/:id" element={<ProtectedRoute><ModifyGuidePage /></ProtectedRoute>} />
         <Route path="/new-user" element={<CreateAccountPage />} />
+        <Route path="/users" element={<ProtectedRoute><UserListPage /></ProtectedRoute>} />
       </Routes>
     </Router>
   </React.StrictMode>

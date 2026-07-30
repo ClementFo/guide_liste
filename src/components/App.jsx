@@ -14,8 +14,8 @@ function App({ GuideList = [] }) {
         <p>Rôle : {currentUser?.role || 'User'}</p>
         {isAdmin && (
           <>
-            <Link to={`/new-user`} className="guide-card-link">
-              Nouvel utilisateur
+            <Link to={`/users`} className="guide-card-link">
+              Liste des utilisateurs
             </Link>
             <br />
             <Link to={`/new-guide`} className="guide-card-link">
