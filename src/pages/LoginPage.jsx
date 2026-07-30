@@ -1,5 +1,5 @@
 ﻿import '../styles/App.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const API_URL = 'http://127.0.0.1:8000';
@@ -11,6 +11,13 @@ function LoginPage() {
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const currentUser = localStorage.getItem('currentUser');
+    if (currentUser) {
+      navigate('/guides');
+    }
+  }, [navigate]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -32,10 +39,17 @@ function LoginPage() {
         alert(data.detail || 'email ou mot de passe incorrect');
         throw new Error(data.detail || 'Une erreur est survenue');
       }
+      const currentUser = {
+        email: data.user?.email || email,
+        role: data.user?.role || 'User',
+      };
+
+      localStorage.setItem('currentUser', JSON.stringify(currentUser));
       setMessage(data.message || 'Utilisateur connecté avec succès');
       navigate('/guides');
 
     } catch (err) {
+      localStorage.removeItem('currentUser');
       setError(err.message || 'Une erreur est survenue');
 
     } finally {

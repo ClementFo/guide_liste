@@ -4,12 +4,25 @@ import GuideCard from './GuideCard';
 import { Link } from 'react-router-dom';
 
 function App({ GuideList = [] }) {
+  const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+  const isAdmin = currentUser?.role === 'Administrateur';
+
   return (
     <div className="App">
         <h1>Liste des guides</h1>
-          <Link to={`/new-guide`} className="guide-card-link">
+        <p>Connecté en tant que : {currentUser?.email || 'Invité'}</p>
+        <p>Rôle : {currentUser?.role || 'User'}</p>
+        {isAdmin && (
+          <>
+            <Link to={`/new-user`} className="guide-card-link">
+              Nouvel utilisateur
+            </Link>
+            <br />
+            <Link to={`/new-guide`} className="guide-card-link">
               Créer un nouveau guide
-          </Link>
+            </Link>
+          </>
+        )}
         <div className="grid-cards">
         {GuideList.map((item) => (
             <GuideCard

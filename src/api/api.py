@@ -70,7 +70,10 @@ class api:
         if user is None:
             raise PermissionError("Identifiants invalides")
 
-        return {"message": "Connexion réussie", "user": {"email": user["email"]}}
+        return {
+            "message": "Connexion réussie",
+            "user": {"email": user["email"], "role": user.get("role", "User")},
+        }
 
     def new_user(self, payload: dict[str, Any]) -> dict[str, Any]:
         email = (payload.get("email") or "").strip().lower()
