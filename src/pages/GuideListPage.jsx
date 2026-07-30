@@ -1,8 +1,8 @@
 import App from '../components/App';
-import { GuideList } from '../datas/GuideList';
+import guideData from '../datas/guideList.json';
 
 function GuideListPage() {
-  return <App GuideList={GuideList} />;
+  return <App GuideList={guideData.users} />;
 }
 
 export default GuideListPage;

@@ -1,10 +1,10 @@
 import { useParams } from 'react-router-dom';
 import Guide from '../components/Guide';
-import { GuideList } from '../datas/GuideList';
+import guideData from '../datas/guideList.json';
 
 function GuidePage() {
   const { id } = useParams();
-  const guide = GuideList[Number(id)];
+  const guide = guideData.users.find((item) => item.id === Number(id));
 
   if (!guide) {
     return <div>Guide introuvable</div>;

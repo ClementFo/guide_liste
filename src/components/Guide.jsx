@@ -7,7 +7,20 @@ function Guide({ title, description, mobilité, jour, activité }) {
             <h1>{title}</h1>
             <p>{description}</p>
             <p>Nombre de jours: {jour}</p>
-            <p>Activité: {activité}</p>
+            <div>
+                <strong>Activités :</strong>
+                {Array.isArray(activité) && activité.length > 0 ? (
+                    <ul>
+                        {activité.map((item) => (
+                            <li key={item.id}>
+                                {item.title} ({item.categorie})
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p>Aucune activité définie</p>
+                )}
+            </div>
             <p>Mobilité: {mobilité}</p>
             {/* Permet de retourner à la liste des guides */}
             <Link to="/" className="guide-card-link">
