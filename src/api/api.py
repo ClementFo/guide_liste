@@ -13,6 +13,9 @@ class api:
         self.users_file = (
             Path(__file__).resolve().parent.parent / "datas" / "users.json"
         )
+        self.guides_file = (
+            Path(__file__).resolve().parent.parent / "datas" / "guideList.json"
+        )
 
     def _load_users(self) -> list[dict[str, Any]]:
         if not self.users_file.exists():
@@ -28,6 +31,22 @@ class api:
     def _save_users(self, users: list[dict[str, Any]]) -> None:
         with self.users_file.open("w", encoding="utf-8") as file:
             json.dump({"users": users}, file, ensure_ascii=False, indent=4)
+            file.write("\n")
+
+    def _load_guides(self) -> list[dict[str, Any]]:
+        if not self.guides_file.exists():
+            raise FileNotFoundError(
+                f"Le fichier des guides est introuvable : {self.guides_file}"
+            )
+
+        with self.guides_file.open(encoding="utf-8") as file:
+            data = json.load(file)
+
+        return data.get("users", [])
+
+    def _save_guides(self, guides: list[dict[str, Any]]) -> None:
+        with self.guides_file.open("w", encoding="utf-8") as file:
+            json.dump({"users": guides}, file, ensure_ascii=False, indent=4)
             file.write("\n")
 
     def login(self, payload: dict[str, Any]) -> dict[str, Any]:
@@ -81,6 +100,83 @@ class api:
             "user": {"email": email, "role": role},
         }
 
+    def new_guide(self, payload: dict[str, Any]) -> dict[str, Any]:
+        guides = self._load_guides()
+
+        title = (payload.get("title") or "").strip()
+        description = (payload.get("description") or "").strip()
+        jour_value = payload.get("jour")
+        mobilité = payload.get("mobilité") or payload.get("mobilite") or ""
+        saison = (payload.get("saison") or "").strip()
+        activité = payload.get("activité") or payload.get("activite") or []
+        userListe = payload.get("userListe") or []
+
+        if not title or not description or jour_value is None:
+            raise ValueError("Titre, description et jour sont requis")
+
+        new_guide = {
+            "id": max((guide.get("id", 0) for guide in guides), default=0) + 1,
+            "title": title,
+            "description": description,
+            "jour": int(str(jour_value).strip()),
+            "mobilité": mobilité,
+            "saison": saison,
+            "activité": activité,
+            "userListe": userListe,
+        }
+
+        guides.append(new_guide)
+        self._save_guides(guides)
+
+        return {"message": "Guide créé avec succès", "guide": new_guide}
+
+    def edit_guide(self, payload: dict[str, Any]) -> dict[str, Any]:
+        guides = self._load_guides()
+        guide_id = payload.get("id")
+
+        if guide_id is None:
+            raise ValueError("Identifiant du guide requis")
+
+        guide = next((item for item in guides if item.get("id") == guide_id), None)
+        if guide is None:
+            raise KeyError("Guide introuvable")
+
+        if payload.get("title") is not None:
+            guide["title"] = str(payload.get("title")).strip()
+        if payload.get("description") is not None:
+            guide["description"] = str(payload.get("description")).strip()
+        if payload.get("jour") is not None:
+            jour_value = payload.get("jour")
+            guide["jour"] = int(str(jour_value).strip())
+        if payload.get("mobilité") is not None or payload.get("mobilite") is not None:
+            guide["mobilité"] = payload.get("mobilité") or payload.get("mobilite") or ""
+        if payload.get("saison") is not None:
+            guide["saison"] = str(payload.get("saison")).strip()
+        if payload.get("activité") is not None or payload.get("activite") is not None:
+            guide["activité"] = payload.get("activité") or payload.get("activite") or []
+        if payload.get("userListe") is not None:
+            guide["userListe"] = payload.get("userListe")
+
+        self._save_guides(guides)
+
+        return {"message": "Guide modifié avec succès", "guide": guide}
+
+    def delete_guide(self, payload: dict[str, Any]) -> dict[str, Any]:
+        guides = self._load_guides()
+        guide_id = payload.get("id")
+
+        if guide_id is None:
+            raise ValueError("Identifiant du guide requis")
+
+        guide = next((item for item in guides if item.get("id") == guide_id), None)
+        if guide is None:
+            raise KeyError("Guide introuvable")
+
+        guides = [item for item in guides if item.get("id") != guide_id]
+        self._save_guides(guides)
+
+        return {"message": "Guide supprimé avec succès", "id": guide_id}
+
 
 back_end = FastAPI()
 back_end.add_middleware(
@@ -110,6 +206,42 @@ async def login(payload: dict[str, Any]) -> dict[str, Any]:
 async def new_user(payload: dict[str, Any]) -> dict[str, Any]:
     try:
         return api_back.new_user(payload)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    except KeyError as exc:
+        raise HTTPException(status_code=409, detail=str(exc))
+    except (TypeError, json.JSONDecodeError, FileNotFoundError):
+        raise HTTPException(status_code=500, detail="Une erreur est survenue")
+
+
+@back_end.post("/new_guide", status_code=201)
+async def new_guide(payload: dict[str, Any]) -> dict[str, Any]:
+    try:
+        return api_back.new_guide(payload)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    except PermissionError as exc:
+        raise HTTPException(status_code=401, detail=str(exc))
+    except (TypeError, json.JSONDecodeError, FileNotFoundError):
+        raise HTTPException(status_code=500, detail="Une erreur est survenue")
+
+
+@back_end.post("/edit_guide", status_code=201)
+async def edit_guide(payload: dict[str, Any]) -> dict[str, Any]:
+    try:
+        return api_back.edit_guide(payload)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    except KeyError as exc:
+        raise HTTPException(status_code=409, detail=str(exc))
+    except (TypeError, json.JSONDecodeError, FileNotFoundError):
+        raise HTTPException(status_code=500, detail="Une erreur est survenue")
+
+
+@back_end.post("/delete_guide", status_code=200)
+async def delete_guide(payload: dict[str, Any]) -> dict[str, Any]:
+    try:
+        return api_back.delete_guide(payload)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
     except KeyError as exc:
